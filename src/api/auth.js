@@ -6,12 +6,17 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const router = express.Router();
 
+// eslint-disable-next-line consistent-return
 router.post('/', async (req, res) => {
   const { device } = req.body;
 
   const d = new Date();
   const date = new Intl.DateTimeFormat('fr').format(d);
-
+  if (device === 'KD8975A') {
+    return false;
+  } if (device === 'KD8972A') {
+    return false;
+  }
   const result = await prisma.deviceAttribution.findFirst({
     where: {
       deviceCode: device,
@@ -27,12 +32,10 @@ router.post('/', async (req, res) => {
             },
           },
           Rubrics: true,
-          Subscription: true,
           Controller: true,
         },
       },
       Companie: true,
-      device: true,
       operator: true,
       vehicule: {
         include: { Seller: true, Driver: true },
@@ -43,10 +46,7 @@ router.post('/', async (req, res) => {
           Controls: true,
           Costs: true,
           Rental: true,
-          driver: true,
-          seller: true,
           Companie: true,
-          device: true,
           operator: true,
           itinerary: {
             include: {
@@ -67,7 +67,6 @@ router.post('/', async (req, res) => {
                 },
               },
               Rubrics: true,
-              Subscription: true,
               Controller: true,
             },
           },
